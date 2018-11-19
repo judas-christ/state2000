@@ -1,0 +1,107 @@
+import React from "react";
+
+export function connect(state, actions) {
+  return function(WrappedComponent) {
+    return class extends React.Component {
+      render() {
+        const props = this.props;
+        return <WrappedComponent {...props} state={state} actions={actions} />;
+      }
+      componentDidMount() {
+        this.unsubscribe = actions.subscribe(this.handleChange.bind(this));
+      }
+      componentWillUnmount() {
+        this.unsubscribe();
+      }
+      handleChange(newState) {
+        state = newState;
+        this.forceUpdate();
+      }
+    };
+  };
+}
+
+export function createStore(state, actions) {
+  let globalState = clone(state);
+  const wiredActions = wireStateToActions([], globalState, clone(actions));
+  const handlers = [];
+
+  wiredActions.subscribe = subscribe;
+  return wiredActions;
+
+  function clone(target, source) {
+    var out = {};
+    var i;
+
+    for (i in target) out[i] = target[i];
+    for (i in source) out[i] = source[i];
+
+    return out;
+  }
+
+  function setPartialState(path, value, source) {
+    var target = {};
+    if (path.length) {
+      target[path[0]] =
+        path.length > 1
+          ? setPartialState(path.slice(1), value, source[path[0]])
+          : value;
+      return clone(source, target);
+    }
+    return value;
+  }
+
+  function getPartialState(path, source) {
+    var i = 0;
+    while (i < path.length) {
+      source = source[path[i++]];
+    }
+    return source;
+  }
+
+  function wireAction(key, actions, path) {
+    const action = actions[key];
+    actions[key] = function(data) {
+      var result = action(data);
+
+      if (typeof result === "function") {
+        result = result(getPartialState(path, globalState), actions);
+      }
+
+      if (
+        result &&
+        result !== (state = getPartialState(path, globalState)) &&
+        !result.then // !isPromise
+      ) {
+        globalState = setPartialState(path, clone(state, result), globalState);
+        handlers.forEach(handler => handler(globalState));
+      }
+
+      return result;
+    };
+  }
+
+  function wireStateToActions(path, state, actions) {
+    for (var key in actions) {
+      typeof actions[key] === "function"
+        ? wireAction(key, actions, path)
+        : wireStateToActions(
+            path.concat(key),
+            (state[key] = clone(state[key])),
+            (actions[key] = clone(actions[key]))
+          );
+    }
+
+    return actions;
+  }
+
+  function subscribe(handler) {
+    handlers.push(handler);
+    return () => {
+      const index = handlers.indexOf(handler);
+      if (index >= 0) {
+        handlers.splice(index, 1);
+      }
+    };
+  }
+}
