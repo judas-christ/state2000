@@ -1,33 +1,19 @@
-import React from "react";
-
-export function connect(state, actions) {
-  return function(WrappedComponent) {
-    return class extends React.Component {
-      render() {
-        const props = this.props;
-        return <WrappedComponent {...props} state={state} actions={actions} />;
-      }
-      componentDidMount() {
-        this.unsubscribe = actions.subscribe(this.handleChange.bind(this));
-      }
-      componentWillUnmount() {
-        this.unsubscribe();
-      }
-      handleChange(newState) {
-        state = newState;
-        this.forceUpdate();
-      }
-    };
-  };
-}
-
-export function createStore(state, actions) {
+export default function createStore(state, actions) {
   let globalState = clone(state);
   const wiredActions = wireStateToActions([], globalState, clone(actions));
   const handlers = [];
 
-  wiredActions.subscribe = subscribe;
-  return wiredActions;
+  return {
+    get actions() {
+      return wiredActions;
+    },
+    get state() {
+      return globalState;
+    },
+    get subscribe() {
+      return subscribe;
+    }
+  };
 
   function clone(target, source) {
     var out = {};
