@@ -8,7 +8,12 @@
   },
   "keywords": [
     "react",
-    "state"
+    "state",
+    "predictable",
+    "functional",
+    "immutable",
+    "hyperapp",
+    "elm"
   ],
   "author": "judas-christ (https://github.com/judas-christ)",
   "license": "MIT"
