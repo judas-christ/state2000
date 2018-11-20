@@ -16,8 +16,8 @@ export default function createStore(state, actions) {
   };
 
   function clone(target, source) {
-    var out = {};
-    var i;
+    const out = {};
+    let i;
 
     for (i in target) out[i] = target[i];
     for (i in source) out[i] = source[i];
@@ -26,7 +26,7 @@ export default function createStore(state, actions) {
   }
 
   function setPartialState(path, value, source) {
-    var target = {};
+    const target = {};
     if (path.length) {
       target[path[0]] =
         path.length > 1
@@ -38,7 +38,7 @@ export default function createStore(state, actions) {
   }
 
   function getPartialState(path, source) {
-    var i = 0;
+    let i = 0;
     while (i < path.length) {
       source = source[path[i++]];
     }
@@ -48,7 +48,7 @@ export default function createStore(state, actions) {
   function wireAction(key, actions, path) {
     const action = actions[key];
     actions[key] = function(data) {
-      var result = action(data);
+      let result = action(data);
 
       if (typeof result === "function") {
         result = result(getPartialState(path, globalState), actions);
@@ -68,7 +68,7 @@ export default function createStore(state, actions) {
   }
 
   function wireStateToActions(path, state, actions) {
-    for (var key in actions) {
+    for (let key in actions) {
       typeof actions[key] === "function"
         ? wireAction(key, actions, path)
         : wireStateToActions(
