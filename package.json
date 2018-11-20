@@ -9,6 +9,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "files": [
+    "index.js",
+    "README.md",
+    "LICENSE",
+    "package.json",
+    "package-lock.json"
+  ],
   "keywords": [
     "state",
     "predictable",
@@ -19,12 +26,15 @@
     "react"
   ],
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/judas-christ/state2000.git"
+    "type": "git",
+    "url": "https://github.com/judas-christ/state2000.git"
   },
   "bugs": {
-    "url":"https://github.com/judas-christ/state2000/issues"
+    "url": "https://github.com/judas-christ/state2000/issues"
   },
   "author": "judas-christ (https://github.com/judas-christ)",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^1.15.2"
+  }
 }
