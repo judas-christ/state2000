@@ -18,6 +18,13 @@
     "elm",
     "react"
   ],
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/judas-christ/state2000.git"
+  },
+  "bugs": {
+    "url":"https://github.com/judas-christ/state2000/issues"
+  },
   "author": "judas-christ (https://github.com/judas-christ)",
   "license": "MIT"
 }
